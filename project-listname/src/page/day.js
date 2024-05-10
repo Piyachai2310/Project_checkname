@@ -200,8 +200,8 @@ const Day = () => {
                             {totalday.map((item, index) => (
                                 <tr key={index}>
                                     <th className='col-4 border ps-4' scope='col'>{item.day}</th>
-                                    <th className='col-2 border text-center' scope='col'><button className='btn border bg-success' onClick={() => Test(item.Id)}>แก้ไข</button></th>
-                                    {/* <th className='col-2 border text-center' scope='col'><Link to={"/app"}><button className='btn border bg-success'>แก้ไข</button></Link></th> */}
+                                    {/* <th className='col-2 border text-center' scope='col'><button className='btn border bg-success' onClick={() => Test(item.Id)}>แก้ไข</button    utton></th> */}
+                                    <th className='col-2 border text-center' scope='col'><Link to={"/app"}><button className='btn border bg-success'>แก้ไข</button></Link></th>
                                     <th className='col-2 border text-center' scope='col'><Link to={"/eveing"}><button className='btn border bg-success'>แก้ไข</button></Link></th>
                                     <th className='col-4 border text-center' scope='col'><button className='btn border bg-danger' onClick={() => ToDelete(item.Id)}>ลบ</button></th>
                                 </tr>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
-import ShowResultName from "../component/showresultname";
+// import ShowResultName from "../component/showresultname";
+import { DataContext } from "../data/DataContext";
 
-export const Datacontext = createContext();
 
 export default function Eveing() {
   const [users, setUsers] = useState([]);
@@ -11,6 +11,7 @@ export default function Eveing() {
   const [userID, setUserID] = useState(0);
   const [summary, setSummary] = useState([]);
   const [selectedSelectOptions, setSelectedSelectOptions] = useState({});
+  const { setEveningUser } = useContext(DataContext);
 
   useEffect(() => {
     async function fetchData() {
@@ -37,7 +38,7 @@ export default function Eveing() {
 
   function handleOptionChange(index, value) {
       setCheckeveing(preCheckevening => {
-        const updateCheckEvening = preCheckevening.map((item) => (item.Id == index+1 ? { ...item , status: value} : item ));
+        const updateCheckEvening = preCheckevening.map((item) => (item.Id === index+1 ? { ...item , status: value} : item ));
         return updateCheckEvening;
       })
     }
@@ -51,6 +52,7 @@ export default function Eveing() {
         // };
         // setSummary(updatedSummary);
         console.log("checkevening in update: ", checkevening);
+        setEveningUser(checkevening);
       };
   
       const fetchDataAndUpdateSummary = async () => {
@@ -68,7 +70,7 @@ export default function Eveing() {
 
   return (
     <>
-      <Datacontext.Provider className="container-fluid" value={summary}>
+      <div className="container-fluid" >
         <div className="row d-flex justify-content-between mt-5">
             <div className="row">
               <select className="col-md-2" value={userID} onChange={(e) => setUserID(e.target.value)}>
@@ -113,7 +115,7 @@ export default function Eveing() {
                       <input 
                         type="radio" 
                         value="เช็คชื่อแล้ว"
-                        checked={checkevening[index].status == "เช็คชื่อแล้ว"}  
+                        checked={checkevening[index].status === "เช็คชื่อแล้ว"}  
                         onChange={() => handleOptionChange(index , "เช็คชื่อแล้ว")}     
                       />
                     </td>
@@ -121,7 +123,7 @@ export default function Eveing() {
                       <input 
                         type="radio" 
                         value="ยังไม่เช็คชื่อ"
-                        checked={checkevening[index].status == "ยังไม่เช็คชื่อ"}  
+                        checked={checkevening[index].status === "ยังไม่เช็คชื่อ"}  
                         onChange={() => handleOptionChange(index , "ยังไม่เช็คชื่อ")}     
                       />
                     </td>
@@ -129,7 +131,7 @@ export default function Eveing() {
                       <input 
                         type="radio" 
                         value="แจ้งเข้าสาย"
-                        checked={checkevening[index].status == "แจ้งเข้าสาย"}  
+                        checked={checkevening[index].status === "แจ้งเข้าสาย"}  
                         onChange={() => handleOptionChange(index , "แจ้งเข้าสาย")}     
                       />
                     </td>
@@ -137,7 +139,7 @@ export default function Eveing() {
                       <input 
                         type="radio" 
                         value="ลาหอพัก"
-                        checked={checkevening[index].status == "ลาหอพัก"}  
+                        checked={checkevening[index].status === "ลาหอพัก"}  
                         onChange={() => handleOptionChange(index , "ลาหอพัก")}     
                       />
                     </td>
@@ -147,7 +149,7 @@ export default function Eveing() {
               </tbody>
             </table>
           </div>
-      </Datacontext.Provider>
+      </div>
     </>
   );
 }

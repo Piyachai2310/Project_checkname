@@ -1,8 +1,8 @@
-import React, { useState, useEffect, createContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ShowResultName from "../component/showresultname";
 
-export const Datacontext = createContext();
+import { DataContext } from "../data/DataContext"
 
 export default function App() {
   const [users, setUsers] = useState([]);
@@ -11,6 +11,7 @@ export default function App() {
   const [userID, setUserID] = useState(0);
   const [summary, setSummary] = useState([]);
   const [selectedSelectOptions, setSelectedSelectOptions] = useState({});
+  const { setMorningUser } = useContext(DataContext);
   
   useEffect(() => {
     async function fetchData() {
@@ -57,11 +58,24 @@ export default function App() {
       // };
       // setSummary(updatedSummary);
       console.log("summary in update: ", checkmoing);
+      setMorningUser(checkmoing)
+
     };
 
     const fetchDataAndUpdateSummary = async () => {
       await updateSummary();
     };
+
+    // const response = fetch("http://localhost:8080/updateMorning" , {
+    //   method: "UPDATE" , 
+    //   headers: {
+    //     Accept: "application/json" ,
+    //     "content-type": "application/json"
+    //   },
+    //   body: {
+    //     morning: 
+    //   }
+    // })
 
     fetchDataAndUpdateSummary();
   }, [checkmoing]);
@@ -74,7 +88,7 @@ export default function App() {
 
   return (
     <>
-      <Datacontext.Provider className="container-fluid" value={summary}>
+      <div className="container-fluid">
         <div className="row d-flex justify-content-between mt-5">
           <div className="row">
             <select className="col-md-2" value={userID} onChange={(e) => setUserID(e.target.value)}>
@@ -157,7 +171,7 @@ export default function App() {
             </tbody>
           </table>
         </div>
-      </Datacontext.Provider>
+      </div>
     </>
   );
 }

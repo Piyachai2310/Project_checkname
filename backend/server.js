@@ -42,33 +42,69 @@ app.get('/day', (req, res) => {
     });
 });
 
-app.post('/createday', (req, res) => {
+app.post('/createday', async (req, res) => {
     const day = req.body.day;
     try {
-       
-        const CreateDay = async () => {
+        const Create_morning_evening = async () => {
+            return new Promise((resolve, reject) => {
+                pool.query("SELECT Id, prefix, name FROM users", function(error, results, fields) {
+                    if (error) reject(error);
 
+                    resolve(results);
+                });
+            });
+        };
+
+        const createDay = async () => {
             const sql = "INSERT INTO day_check (day) VALUES (?)";
-            const values = [day]
-            const frommatted = mysql.format(sql, values);
-            await pool.query(frommatted);
+            const values = [day];
+            const formattedSql = mysql.format(sql, values);
+            await pool.query(formattedSql);
 
-            await pool.query("INSERT INTO check_mor_even (day , Id , name , Morning , Evening) VALUES (?,?,?,?,?)", [])
-            res.json({
-                result: true
-            })
-        }
+            const users = await Create_morning_evening();
+            // console.log("users: " , users)
+            const morningEveningPromises = users.map(user => {
+                const fullName = user.prefix + user.name;
+                const sql = "INSERT INTO check_mor_even (Day, Id, name, Morning, Evening) VALUES (?, ?, ?, ?, ?)";
+                const values = [day, user.Id, fullName, null, null]; // You need to adjust this based on your logic
+                console.log("day: " , day)
+                console.log("user.Id: " , user.Id)
+                console.log("fullName: " , fullName)
+                const formattedSql = mysql.format(sql, values);
+                return pool.query(formattedSql);
+            });
+            await Promise.all(morningEveningPromises);
+            res.json({ result: true }); 
+        };
 
-
-        CreateDay();
-
+        await createDay();
     } catch (err) {
         res.json({
             result: false,
             message: err.message
-        })
+        });
     }
 });
+
+app.update('/updateMorning' , async(req , res) => {
+    const input = req.body
+    pool.query("UPDATE check_mor_even SET Morning = ? WHERE Id = ?" , 
+    [input.morning , input.Id] ,
+    function (err , result , fields) {
+        if( err){
+            res.json({
+                success: false ,
+                message: err.message
+            })
+        }
+        else{
+            res.json({
+                success: true
+            })
+        }
+    })
+})
+
 
 app.delete('/deleteday/:id', (req, res) => {
     try {

@@ -1,7 +1,7 @@
     import React from 'react'
-    import Linkber from "../linkber";
+    import Linkber from "./linkber";
     import { Link } from "react-router-dom";
-    import Showresultname from "./showresultname";
+    // import Showresultname from "./showresultname";
 
 
     const torpbar = () => {
@@ -51,9 +51,9 @@
                     </ul>
                     <hr />
 
-                    <div>
+                    {/* <div>
                         <Showresultname />
-                    </div>
+                    </div> */}
             </>
         )
     }
