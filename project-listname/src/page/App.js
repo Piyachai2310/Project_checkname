@@ -7,12 +7,12 @@ import { DataContext } from "../data/DataContext"
 export default function App() {
   const [users, setUsers] = useState([]);
   const [checkmoing, setCheckmoing] = useState([]);
-  const [checkeveing, setCheckeveing] = useState([]);
   const [userID, setUserID] = useState(0);
   const [summary, setSummary] = useState([]);
   const [selectedSelectOptions, setSelectedSelectOptions] = useState({});
+  const [state, setState] = useState([])
   const { setMorningUser } = useContext(DataContext);
-  
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -25,7 +25,27 @@ export default function App() {
         });
         const data = await response.json();
         setUsers(data);
-        setCheckmoing(data.map(item => ({ Id: item.number })));
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:8080/check/" + 0, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        setState(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -43,11 +63,35 @@ export default function App() {
   // }
 
   function handleOptionChange(index, value) {
-      setCheckmoing(prevCheckmoing => {
-        const updatedCheckMoing = prevCheckmoing.map((user) => (user.Id === index + 1 ? { ...user, status: value } : user));
-        return updatedCheckMoing;
-      });
+    console.log("index: ", index)
+    setState(pre => {
+      return pre.map((item , i) => {
+        if(i+1 === index){
+          return {...item , Morning: value}
+        }
+        return item;
+      })
+    })
+    const body = JSON.stringify({ Id: index, morning: value });
 
+    const DoUpdate = async () => {
+
+      const response = await fetch("http://localhost:8080/updateMorning",
+        {
+          method: "PUT",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: body
+        }
+
+      )
+      // if(response.ok){
+      //   window.location = "/app"
+      // }
+    }
+    DoUpdate();
   }
 
   useEffect(() => {
@@ -57,8 +101,9 @@ export default function App() {
       //   checkeveing: [...checkeveing]
       // };
       // setSummary(updatedSummary);
-      console.log("summary in update: ", checkmoing);
-      setMorningUser(checkmoing)
+      // console.log("summary in update: ", checkmoing);
+      console.log("state in update: ", state);
+      // setMorningUser(checkmoing)
 
     };
 
@@ -78,7 +123,7 @@ export default function App() {
     // })
 
     fetchDataAndUpdateSummary();
-  }, [checkmoing]);
+  }, [checkmoing, state]);
 
 
 
@@ -122,34 +167,34 @@ export default function App() {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+              {state.map((user, index) => (
                 <tr key={index}>
                   <td>{user.number}</td>
                   <td>{user.prefix}</td>
                   <td>{user.name}</td>
-                  <td>{user.year}</td>
+                  <td>{user.Year}</td>
                   <td className="text-center">
                     <input
                       type="radio"
                       value="มาเรียน"
-                      checked={checkmoing[index].status === "มาเรียน"}
-                      onChange={() => handleOptionChange(index, "มาเรียน")}
+                      checked={state[index].Morning === "มาเรียน"}
+                      onChange={() => handleOptionChange(index + 1, "มาเรียน")}
                     />
                   </td>
                   <td className="text-center">
                     <input
                       type="radio"
                       value="ลา"
-                      checked={checkmoing[index].status === "ลา"}
-                      onChange={() => handleOptionChange(index, "ลา")}
+                      checked={state[index].Morning === "ลา"}
+                      onChange={() => handleOptionChange(index + 1, "ลา")}
                     />
                   </td>
                   <td className="text-center">
                     <input
                       type="radio"
                       value="อื่นๆ"
-                      checked={checkmoing[index].status === "อื่นๆ"}
-                      onChange={() => handleOptionChange(index, "อื่นๆ")}
+                      checked={state[index].Morning === "อื่นๆ"}
+                      onChange={() => handleOptionChange(index + 1, "อื่นๆ")}
                     />
                   </td>
                   <td className="text-center">

@@ -42,12 +42,30 @@ app.get('/day', (req, res) => {
     });
 });
 
+app.get('/check/:period', (req, res) => {
+    const perriod = req.params.period;
+    if(perriod == 0){
+        pool.query("SELECT * FROM check_mor_even ORDER BY Id ASC", (error, results, fields) => {
+            if (error) throw error;
+    
+            res.json(results);
+        });
+    }
+    else{
+        pool.query("select Evening from check_mor_even", (error, results, fields) => {
+            if (error) throw error;
+    
+            res.json(results);
+        });
+    }
+});
+
 app.post('/createday', async (req, res) => {
     const day = req.body.day;
     try {
         const Create_morning_evening = async () => {
             return new Promise((resolve, reject) => {
-                pool.query("SELECT Id, prefix, name FROM users", function(error, results, fields) {
+                pool.query("SELECT * FROM users", function(error, results, fields) {
                     if (error) reject(error);
 
                     resolve(results);
@@ -65,11 +83,11 @@ app.post('/createday', async (req, res) => {
             // console.log("users: " , users)
             const morningEveningPromises = users.map(user => {
                 const fullName = user.prefix + user.name;
-                const sql = "INSERT INTO check_mor_even (Day, Id, name, Morning, Evening) VALUES (?, ?, ?, ?, ?)";
-                const values = [day, user.Id, fullName, null, null]; // You need to adjust this based on your logic
-                console.log("day: " , day)
-                console.log("user.Id: " , user.Id)
-                console.log("fullName: " , fullName)
+                const sql = "INSERT INTO check_mor_even (Day, Id, number , prefix , name , Year, Morning, Evening) VALUES (? ,? ,? ,? , ?, ?, ?, ?)";
+                const values = [day, user.Id, user.number, user.prefix , user.name, user.year, null, null]; // You need to adjust this based on your logic
+                // console.log("day: " , day)
+                // console.log("user.Id: " , user.Id)
+                // console.log("fullName: " , fullName)
                 const formattedSql = mysql.format(sql, values);
                 return pool.query(formattedSql);
             });
@@ -86,29 +104,31 @@ app.post('/createday', async (req, res) => {
     }
 });
 
-app.update('/updateMorning' , async(req , res) => {
-    const input = req.body
-    pool.query("UPDATE check_mor_even SET Morning = ? WHERE Id = ?" , 
-    [input.morning , input.Id] ,
-    function (err , result , fields) {
-        if( err){
-            res.json({
-                success: false ,
-                message: err.message
-            })
+    app.put('/updateMorning', async (req, res) => {
+        const input = req.body;
+        pool.query("UPDATE check_mor_even SET Morning = ? WHERE Id = ?", 
+        [input.morning, input.Id], 
+        function (err, result, fields) {
+        if (err) {
+            res.status(500).json({
+            success: false,
+            message: err.message
+            });
+        } else {
+            res.status(200).json({
+            success: true
+            });
         }
-        else{
-            res.json({
-                success: true
-            })
-        }
-    })
-})
+        });
+    });
+  
+
 
 
 app.delete('/deleteday/:id', (req, res) => {
     try {
         const dayId = req.params.id;
+        console.log("dayId: " , dayId);
         const sql = "DELETE FROM day_check WHERE Id = ?";
 
         pool.query(sql, [dayId], (err, result) => {

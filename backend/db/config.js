@@ -1,0 +1,1 @@
+const MongoDB = "mongodb+srv://admin:1234@database.1p96qji.mongodb.net/"
