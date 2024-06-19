@@ -13,11 +13,11 @@ const Home = () => {
     <DataProvider>
       <Header />
       <div className="container-fluid">
-        <div className="row d-flex justify-content-between mt-5">
-          <div className="col-md-2">
+        <div className="row d-flex justify-content-between">
+          <div className="col-md-2 ">
             <Torpbar />
           </div>
-          <div className='col-md-9'>
+          <div className='col-md-10'>
             <Outlet/>
           </div>
         </div>

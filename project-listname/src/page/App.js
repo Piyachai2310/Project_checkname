@@ -1,43 +1,27 @@
 import React, { useState, useEffect, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ShowResultName from "../component/showresultname";
+import { useParams } from 'react-router-dom';
 
 import { DataContext } from "../data/DataContext"
 
 export default function App() {
-  const [users, setUsers] = useState([]);
-  const [checkmoing, setCheckmoing] = useState([]);
   const [userID, setUserID] = useState(0);
-  const [summary, setSummary] = useState([]);
-  const [selectedSelectOptions, setSelectedSelectOptions] = useState({});
+  
   const [state, setState] = useState([])
-  const { setMorningUser } = useContext(DataContext);
+  const { Id } = useParams();  // ดึง id จากพารามิเตอร์ URL
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const response = await fetch("http://localhost:8080/users", {
-          method: "GET",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        });
-        const data = await response.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    }
 
-    fetchData();
-  }, []);
+  React.useEffect(() => {
+    // console.log("Received ID:", Id);
+    console.log("user ID:", userID);
+  }, [Id , userID]);
 
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:8080/check/" + 0, {
+        const response = await fetch("http://localhost:8080/check/" + Id + "/" + userID, {
           method: "GET",
           headers: {
             Accept: "application/json",
@@ -46,21 +30,15 @@ export default function App() {
         });
         const data = await response.json();
         setState(data);
+        // console.log("Check Id day: " , {id});
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
 
     fetchData();
-  }, []);
+  }, [Id , userID]);
 
-  // function handleOptionChange(index, value) {
-  //   setUsers(prevUsers => {
-  //     const updatedUsers = [...prevUsers];
-  //     updatedUsers[index].status = value;
-  //     return updatedUsers;
-  //   });
-  // }
 
   function handleOptionChange(index, value) {
     console.log("index: ", index)
@@ -74,9 +52,9 @@ export default function App() {
     })
     const body = JSON.stringify({ Id: index, morning: value });
 
-    const DoUpdate = async () => {
+    const DoUpdate = async (Id) => {
 
-      const response = await fetch("http://localhost:8080/updateMorning",
+      const response = await fetch("http://localhost:8080/updateMorning/"+ Id,
         {
           method: "PUT",
           headers: {
@@ -87,48 +65,10 @@ export default function App() {
         }
 
       )
-      // if(response.ok){
-      //   window.location = "/app"
-      // }
+
     }
-    DoUpdate();
+    DoUpdate(Id);
   }
-
-  useEffect(() => {
-    const updateSummary = async () => {
-      // const updatedSummary = {
-      //   checkmoing: [...checkmoing],
-      //   checkeveing: [...checkeveing]
-      // };
-      // setSummary(updatedSummary);
-      // console.log("summary in update: ", checkmoing);
-      console.log("state in update: ", state);
-      // setMorningUser(checkmoing)
-
-    };
-
-    const fetchDataAndUpdateSummary = async () => {
-      await updateSummary();
-    };
-
-    // const response = fetch("http://localhost:8080/updateMorning" , {
-    //   method: "UPDATE" , 
-    //   headers: {
-    //     Accept: "application/json" ,
-    //     "content-type": "application/json"
-    //   },
-    //   body: {
-    //     morning: 
-    //   }
-    // })
-
-    fetchDataAndUpdateSummary();
-  }, [checkmoing, state]);
-
-
-
-  // console.log("summary: " , summary);
-
 
 
   return (
@@ -197,7 +137,7 @@ export default function App() {
                       onChange={() => handleOptionChange(index + 1, "อื่นๆ")}
                     />
                   </td>
-                  <td className="text-center">
+                  {/* <td className="text-center">
                     <input
                       type="text"
                       value={user.additionalInfo || ""}
@@ -210,7 +150,7 @@ export default function App() {
                         });
                       }}
                     />
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

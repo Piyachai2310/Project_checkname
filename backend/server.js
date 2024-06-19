@@ -104,23 +104,23 @@ app.post('/createday', async (req, res) => {
     }
 });
 
-    app.put('/updateMorning', async (req, res) => {
-        const input = req.body;
-        pool.query("UPDATE check_mor_even SET Morning = ? WHERE Id = ?", 
-        [input.morning, input.Id], 
-        function (err, result, fields) {
-        if (err) {
-            res.status(500).json({
-            success: false,
-            message: err.message
-            });
-        } else {
-            res.status(200).json({
-            success: true
-            });
-        }
+app.put('/updateMorning', async (req, res) => {
+    const input = req.body;
+    pool.query("UPDATE check_mor_even SET Morning = ? WHERE Id = ?", 
+    [input.morning, input.Id], 
+    function (err, result, fields) {
+    if (err) {
+        res.status(500).json({
+        success: false,
+        message: err.message
         });
+    } else {
+        res.status(200).json({
+        success: true
+        });
+    }
     });
+});
   
 
 

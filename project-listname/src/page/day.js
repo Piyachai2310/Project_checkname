@@ -32,7 +32,7 @@ const Day = () => {
                 });
                 const data = await response.json();
                 setTotalday(data);
-                console.log(totalday);
+
             } catch (error) {
                 console.error("Error fetching data:", error)
             }
@@ -40,6 +40,7 @@ const Day = () => {
 
         fetchData();
     }, [])
+
 
 
 
@@ -51,10 +52,11 @@ const Day = () => {
             // console.log("day: ", year)
             console.log("sum: ", sum)
             setSum(sum);
+            console.log(totalday);
         }
 
         Dday();
-    }, [day, month, year])
+    }, [day, month, year, totalday])
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -68,7 +70,7 @@ const Day = () => {
                     },
                     body: JSON.stringify({
                         day: Sum
-                        
+
                     })
                 }
             )
@@ -122,10 +124,28 @@ const Day = () => {
     return (
         <>
             <div className='container-fuild'>
-                <div className='row mb-4'>
-                    <div className='col-10'>
-
+                <div className='row bg-primary position-relative mb-3' style={{ height: "150px" }}>
+                    <div className='col-4  d-flex justify-content-center p-3 position-absolute' style={{ height: "150px", top: "60px" }}>
+                        <div className='shadow bg-body-secondary d-flex justify-content-center align-items-center' style={{ height: "120px", width: "120px" }}>
+                            <h5 className='position-absolute' style={{top:"15px" , left:"160px"}}>Day</h5>
+                            <div className='d-flex justify-content-center align-items-center '>
+                               <h3>{totalday.length}</h3>
+                            </div>
+                        </div>
                     </div>
+                    {/* <div className='col-4 bg-success d-flex justify-content-center p-3'>
+                        <div className='bg-primary d-flex justify-content-center align-items-center' style={{width: "120px"}}>
+                            {totalday.length}
+                        </div>
+                    </div> */}
+                    {/* <div className='col-4 bg-success d-flex justify-content-center p-3'>
+                        <div className='bg-primary d-flex justify-content-center align-items-center' style={{width: "120px"}}>
+                            1
+                        </div>
+                    </div> */}
+                </div>
+                <div className='row mb-4'>
+                    <div className='col-10'></div>
                     <div className="col-2">
                         <Button variant="primary" onClick={handleShowModal1}>
                             Create
@@ -201,8 +221,8 @@ const Day = () => {
                                 <tr key={index}>
                                     <th className='col-4 border ps-4' scope='col'>{item.day}</th>
                                     {/* <th className='col-2 border text-center' scope='col'><button className='btn border bg-success' onClick={() => Test(item.Id)}>แก้ไข</button    utton></th> */}
-                                    <th className='col-2 border text-center' scope='col'><Link to={"/app"}><button className='btn border bg-success'>แก้ไข</button></Link></th>
-                                    <th className='col-2 border text-center' scope='col'><Link to={"/eveing"}><button className='btn border bg-success'>แก้ไข</button></Link></th>
+                                    <th className='col-2 border text-center' scope='col'><Link to={`/app/${item.Id}`} ><button className='btn border bg-success'>แก้ไข</button></Link></th>
+                                    <th className='col-2 border text-center' scope='col'><Link to={`/eveing/${item.Id}`}><button className='btn border bg-success'>แก้ไข</button></Link></th>
                                     <th className='col-4 border text-center' scope='col'><button className='btn border bg-danger' onClick={() => ToDelete(item.Id)}>ลบ</button></th>
                                 </tr>
                             ))}

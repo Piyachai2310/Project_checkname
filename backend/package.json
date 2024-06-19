@@ -5,6 +5,16 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.6.1",
-    "mysql": "^2.18.1"
-  }
+    "mysql": "^2.18.1",
+    "nodemon": "^3.1.0"
+  },
+  "scripts": {
+    "start": "node serverMongodb.js --omit=dev"
+  },
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "serverMongodb.js",
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

@@ -2,16 +2,16 @@ import React, { useState, useEffect, useContext } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css'
 // import ShowResultName from "../component/showresultname";
 import { DataContext } from "../data/DataContext";
+import { useParams } from 'react-router-dom';
 
 
 export default function Eveing() {
+
   const [users, setUsers] = useState([]);
-  const [checkmoing, setCheckmoing] = useState([]);
-  const [checkevening, setCheckeveing] = useState([]);
   const [userID, setUserID] = useState(0);
-  const [summary, setSummary] = useState([]);
-  const [selectedSelectOptions, setSelectedSelectOptions] = useState({});
-  const { setEveningUser } = useContext(DataContext);
+  const { setEveningUser } = useContext(DataContext); //ค่อยลบ
+  const [state, setState] = useState([])
+  const { Id } = useParams();  // ดึง id จากพารามิเตอร์ URL
 
   useEffect(() => {
     async function fetchData() {
@@ -25,8 +25,7 @@ export default function Eveing() {
         });
         const data = await response.json();
         setUsers(data);
-        setCheckmoing(data.map(item => ({ Id: item.number })));
-        setCheckeveing(data.map(item => ({ Id: item.number })));
+
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -35,34 +34,66 @@ export default function Eveing() {
     fetchData();
   }, []);
 
-
-  function handleOptionChange(index, value) {
-      setCheckeveing(preCheckevening => {
-        const updateCheckEvening = preCheckevening.map((item) => (item.Id === index+1 ? { ...item , status: value} : item ));
-        return updateCheckEvening;
-      })
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:8080/check/" + Id + "/" + userID, {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        setState(data);
+        // console.log("Check Id day: " , {id});
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     }
 
+    fetchData();
+  }, [Id , userID]);
 
-    useEffect(() => {
-      const updateSummary = async () => {
-        // const updatedSummary = {
-        //   checkmoing: [...checkmoing],
-        //   checkeveing: [...checkeveing]
-        // };
-        // setSummary(updatedSummary);
-        console.log("checkevening in update: ", checkevening);
-        setEveningUser(checkevening);
-      };
+
+  useEffect(() => {
+    console.log("State updated: ", state);
+  }, [state]);
   
-      const fetchDataAndUpdateSummary = async () => {
-        await updateSummary();
-      };
+
+    function handleOptionChange(index, value) {
+      console.log("index: ", index)
+      //ทำแคสสถานะ
+      setState(pre => {
+        return pre.map((item , i) => {
+          if(i+1 === index){
+            return {...item , Evening: value}
+          }
+          return item;
+        })
+      })
+      console.log("State: " , state);
+      const body = JSON.stringify({ Id: index, evening: value });
   
-      fetchDataAndUpdateSummary();
-    }, [checkevening]);
+      const DoUpdate = async (Id) => {
 
-
+        const response = await fetch("http://localhost:8080/updateEvening/"+ Id,
+          {
+            method: "PUT",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: body
+          }
+  
+        )
+        // if(response.ok){
+        //   window.location = "/app"
+        // }
+      }
+      DoUpdate(Id);
+    }
 
   // console.log("summary: " , summary);
 
@@ -105,7 +136,7 @@ export default function Eveing() {
                 </tr>
               </thead>
               <tbody>
-                {users.map((user, index) => (
+                {state.map((user, index) => (
                   <tr key={index}>
                     <td>{user.number}</td>
                     <td>{user.prefix}</td>
@@ -115,32 +146,32 @@ export default function Eveing() {
                       <input 
                         type="radio" 
                         value="เช็คชื่อแล้ว"
-                        checked={checkevening[index].status === "เช็คชื่อแล้ว"}  
-                        onChange={() => handleOptionChange(index , "เช็คชื่อแล้ว")}     
+                        checked={user.Evening === "เช็คชื่อแล้ว"}  
+                        onChange={() => handleOptionChange(index+1 , "เช็คชื่อแล้ว")}     
                       />
                     </td>
                     <td className="text-center">
                       <input 
                         type="radio" 
                         value="ยังไม่เช็คชื่อ"
-                        checked={checkevening[index].status === "ยังไม่เช็คชื่อ"}  
-                        onChange={() => handleOptionChange(index , "ยังไม่เช็คชื่อ")}     
+                        checked={user.Evening === "ยังไม่เช็คชื่อ"}  
+                        onChange={() => handleOptionChange(index+1 , "ยังไม่เช็คชื่อ")}     
                       />
                     </td>
                     <td className="text-center">
                       <input 
                         type="radio" 
                         value="แจ้งเข้าสาย"
-                        checked={checkevening[index].status === "แจ้งเข้าสาย"}  
-                        onChange={() => handleOptionChange(index , "แจ้งเข้าสาย")}     
+                        checked={user.Evening === "แจ้งเข้าสาย"}  
+                        onChange={() => handleOptionChange(index+1 , "แจ้งเข้าสาย")}     
                       />
                     </td>
                     <td className="text-center">
                       <input 
                         type="radio" 
                         value="ลาหอพัก"
-                        checked={checkevening[index].status === "ลาหอพัก"}  
-                        onChange={() => handleOptionChange(index , "ลาหอพัก")}     
+                        checked={user.Evening === "ลาหอพัก"}  
+                        onChange={() => handleOptionChange(index+1 , "ลาหอพัก")}     
                       />
                     </td>
                     <td className="text-center"><input type="text" /></td>

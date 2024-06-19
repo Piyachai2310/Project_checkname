@@ -1,9 +1,14 @@
+import Logo from '../data/Image/Logo.png'
+
 const Header = function () {
     return (
         <>
             <div className="row">
                 <header className="navbar sticky-top bg-dark flex-md-nowrap p-0 shadow" data-bs-theme="dark">
-                    <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">Company name</a>
+                    {/* <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6 text-white" href="#">Company name</a> */}
+                    <a>
+                        <img src={Logo} alt="check name" style={{height: '100px'}}/>
+                    </a>
                 <div className="d-flex justify-content-end">
                     <div className="container-fluid my-1">
                         <nav aria-label="breadcrumb">

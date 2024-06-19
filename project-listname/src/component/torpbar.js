@@ -30,11 +30,7 @@
                                 คลังรายชื่อ
                             </Link>
                         </li>
-                        <li className="nav-item">
-                            <Link to="day   " className="nav-link active bg-success">
-                                เก็บวันที่
-                            </Link>
-                        </li>
+
                         <li className="nav-item">
                             <a href="#" className="nav-link active" aria-current="page">
                                 <svg className="bi pe-none me-2" width="16" height="16"><use href="/icons.svg#home"></use></svg>
